@@ -3,6 +3,7 @@
 //
 
 #include "Game.h"
+#include "Simple.h"
 
 namespace Gaming {
     Game::Game() {
@@ -49,11 +50,11 @@ namespace Gaming {
     }
 
     void Game::addSimple(const Position &position) {
-        Simple simple(this, position, 100);
+        Simple simple(*this, position, 100);
         __grid[position] = simple;
     }
     void Game::addSimple(unsigned x, unsigned y) {
-        position = y * __width + x;
+        Position position = y * __width + x;
         addSimple(position);
     }
 }
