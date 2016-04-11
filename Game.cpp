@@ -25,11 +25,13 @@ namespace Gaming {
         __grid = another.__grid;
     }
     Game& Game::operator=(const Game &other) {
-        return Game(other);
+        Game game(other);
+        return game;
     }
 
     unsigned int Game::getNumPieces() const {
-        return __grid.size;
+        unsigned int pieces = __grid.size();
+        return pieces;
     }
     unsigned int Game::getNumAgents() const {
 
@@ -51,10 +53,11 @@ namespace Gaming {
 
     void Game::addSimple(const Position &position) {
         Simple simple(*this, position, 100);
-        __grid[position] = simple;
+        unsigned int pos = 0; //y*w+x
+        __grid[pos] = *simple;
     }
     void Game::addSimple(unsigned x, unsigned y) {
-        Position position = y * __width + x;
+        Position position(x,y);
         addSimple(position);
     }
 }

@@ -50,4 +50,16 @@ namespace Gaming {
         __x = x;
         __y = y;
     }
+    void PositionEx::__print_args(std::ostream &os) const {
+        os << getName() << ": " << " " << __x << ", " << __y << std::endl;
+    }
+    PositionEmptyEx::PositionEmptyEx(unsigned x, unsigned y) {
+        setName("PositionEmptyEx");
+    }
+    PositionNonemptyEx::PositionNonemptyEx(unsigned x, unsigned y) {
+        setName("PositionNonemptyEx");
+    }
+    PosVectorEmptyEx::PosVectorEmptyEx() {
+
+    }
 }
