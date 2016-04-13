@@ -18,23 +18,22 @@ namespace Gaming {
             return *this;
         }
         else if(other->getEnergy() > this->getEnergy()) {
+            other->addEnergy(__energy * -1);
             this->finish();
             return *this;
         }
         else if(other->getEnergy() < this->getEnergy()) {
+            __energy += other->getEnergy();
             other->finish();
             return *this;
         }
     }
     Piece& Agent::interact(Resource *other) {
-        if(other->getType() == FOOD) {
-            __energy += other->getCapacity();
-            other->finish();
-        }
-        else if(other->getType() == ADVANTAGE) {
-            __energy *= other->ADVANTAGE_MULT_FACTOR;
-            other->finish();
-        }
+        addEnergy(other->consume());
+        return *this;
+    }
+    Piece& Agent::operator*(Piece &other) {
+        other.interact(this);
         return *this;
     }
 
