@@ -24,22 +24,14 @@ namespace Gaming {
     unsigned DimensionEx::getExpWidth() const { return __exp_width; }
     unsigned DimensionEx::getWidth() const { return __width; }
     unsigned DimensionEx::getHeight() const { return __height; }
-    InsufficientDimensionsEx::InsufficientDimensionsEx(unsigned minWidth, unsigned minHeight, unsigned width, unsigned height) {
+    InsufficientDimensionsEx::InsufficientDimensionsEx(unsigned minWidth, unsigned minHeight, unsigned width, unsigned height) : DimensionEx(minWidth, minHeight, width, height) {
         setName("InsufficientDimensionsEx");
-        __exp_height = minHeight;
-        __exp_width = minWidth;
-        __width = width;
-        __height = height;
     }
     void InsufficientDimensionsEx::__print_args(std::ostream &os) const {
         os << getName() << ": " << getHeight() << " < " << getExpHeight() << "and/or" << getWidth() << " < " << getExpWidth();
     }
-    OutOfBoundsEx::OutOfBoundsEx(unsigned maxWidth, unsigned maxHeight, unsigned width, unsigned height) {
+    OutOfBoundsEx::OutOfBoundsEx(unsigned maxWidth, unsigned maxHeight, unsigned width, unsigned height) : DimensionEx(maxWidth, maxHeight, width, height) {
         setName("OutOfBoundsEx");
-        __exp_width = maxWidth;
-        __exp_height = maxHeight;
-        __height = height;
-        __width = width;
     }
     void OutOfBoundsEx::__print_args(std::ostream &os) const {
         os << getName() << ": " << getHeight() << " > " << getExpHeight() << "and/or" << getWidth() << " > " << getExpWidth();
@@ -53,10 +45,10 @@ namespace Gaming {
     void PositionEx::__print_args(std::ostream &os) const {
         os << getName() << ": " << " " << __x << ", " << __y << std::endl;
     }
-    PositionEmptyEx::PositionEmptyEx(unsigned x, unsigned y) {
+    PositionEmptyEx::PositionEmptyEx(unsigned x, unsigned y) : PositionEx(0, 0) {
         setName("PositionEmptyEx");
     }
-    PositionNonemptyEx::PositionNonemptyEx(unsigned x, unsigned y) {
+    PositionNonemptyEx::PositionNonemptyEx(unsigned x, unsigned y) : PositionEx(1, 1) {
         setName("PositionNonemptyEx");
     }
     PosVectorEmptyEx::PosVectorEmptyEx() {

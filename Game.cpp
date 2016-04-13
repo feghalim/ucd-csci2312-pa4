@@ -16,6 +16,7 @@ namespace Gaming {
     Game::Game(unsigned width, unsigned height, bool manual) {
         __width = width;
         __height = height;
+        populate();
         __status = NOT_STARTED;
     }
     Game::Game(const Game &another) {
@@ -23,10 +24,6 @@ namespace Gaming {
         __height = another.__height;
         __status = another.__status;
         __grid = another.__grid;
-    }
-    Game& Game::operator=(const Game &other) {
-        Game game(other);
-        return game;
     }
 
     unsigned int Game::getNumPieces() const {
@@ -52,12 +49,14 @@ namespace Gaming {
     }
 
     void Game::addSimple(const Position &position) {
-        Simple simple(*this, position, 100);
-        unsigned int pos = 0; //y*w+x
-        __grid[pos] = *simple;
+
     }
     void Game::addSimple(unsigned x, unsigned y) {
         Position position(x,y);
         addSimple(position);
+    }
+    void Game::populate() {
+        __numInitAgents = (__width * __height) / NUM_INIT_AGENT_FACTOR;
+        __numInitResources = (__width * __height) / NUM_INIT_RESOURCE_FACTOR;
     }
 }
