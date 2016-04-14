@@ -5,7 +5,7 @@
 #include "Food.h"
 
 namespace Gaming {
-    Food::FOOD_ID = 'F';
+    const char FOOD_ID = 'F';
 
     Food::Food(const Game &g, const Position &p, double capacity) : Resource(g, p, capacity) {
 

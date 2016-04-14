@@ -9,9 +9,16 @@
 #include "Strategic.h"
 
 namespace Gaming {
+    const unsigned int NUM_INIT_AGENT_FACTOR = 4;
+    const unsigned int NUM_INIT_RESOURCE_FACTOR = 2;
+    const unsigned MIN_WIDTH = 3;
+    const unsigned MIN_HEIGHT = 3;
+    const double STARTING_AGENT_ENERGY = 20;
+    const double STARTING_RESOURCE_ENERGY = 10;
+
     Game::Game() {
-        __width = 3;
-        __height = 3;
+        __width = MIN_WIDTH;
+        __height = MIN_HEIGHT;
         __round = 0;
         populate();
         __status = NOT_STARTED;
@@ -30,12 +37,15 @@ namespace Gaming {
         __status = another.__status;
         __grid = another.__grid;
     }
+    Game::~Game() {
+
+    }
 
     unsigned int Game::getNumPieces() const {
         unsigned int pieces = 0;
 
         for (auto it = __grid.begin(); it != __grid.end(); it++) {
-            if(it != nullptr) {
+            if(*it != nullptr) {
                 pieces++;
             }
         }
@@ -97,9 +107,18 @@ namespace Gaming {
 
         __grid[temp + position.x] = new Simple(*this, position, STARTING_AGENT_ENERGY);
     }
+    void Game::addSimple(const Position &position, double energy) {
+        unsigned int temp = position.y * __width;
+
+        __grid[temp + position.x] = new Simple(*this, position, energy);
+    }
     void Game::addSimple(unsigned x, unsigned y) {
         Position position(x,y);
         addSimple(position);
+    }
+    void Game::addSimple(unsigned x, unsigned y, double energy) {
+        Position position(x,y);
+        addSimple(position, energy);
     }
     void Game::addAdvantage(const Position &position) {
         unsigned int temp = position.y * __width;
@@ -127,6 +146,65 @@ namespace Gaming {
     void Game::addStrategic(unsigned x, unsigned y, Strategy *s) {
         Position position(x, y);
         addStrategic(position, s);
+    }
+    const Surroundings Game::getSurroundings(const Position &pos) const {
+        unsigned int temp = pos.y * __width + pos.x;
+
+        Surroundings piece;
+
+        for(int i = 0; i < 9; i++) {
+            if(i != 4) {
+                if(i < 4) {
+                    if(__grid[temp - i] != nullptr) {
+                        piece.array[i] = __grid[temp - i]->getType();
+                    }
+                    else {
+                        piece.array[i] = EMPTY;
+                    }
+                }
+                if(i > 4) {
+                    if(__grid[temp + i] != nullptr) {
+                        piece.array[i] = __grid[temp + i]->getType();
+                    }
+                    else {
+                        piece.array[i] = EMPTY;
+                    }
+                }
+            }
+            else {
+                piece.array[4] = SELF;
+            }
+        }
+        return piece;
+    }
+    const ActionType Game::reachSurroundings(const Position &from, const Position &to) {
+        if(from.x == to.x && from.y == to.y) {
+            return STAY;
+        }
+        if(from.x < to.x && from.y == to.y) {
+            return E;
+        }
+        if(from.x > to.x && from.y == to.y) {
+            return W;
+        }
+        if(from.x == to.x && from.y < to.y) {
+            return S;
+        }
+        if(from.x == to.x && from.y > to.y) {
+            return N;
+        }
+        if(from.x < to.x && from.y < to.y) {
+            return SE;
+        }
+        if(from.x < to.x && from.y > to.y) {
+            return NE;
+        }
+        if(from.x > to.x && from.y < to.y) {
+            return SW;
+        }
+        if(from.x > to.x && from.y > to.y) {
+            return NW;
+        }
     }
     void Game::populate() {
         __numInitAgents = (__width * __height) / NUM_INIT_AGENT_FACTOR;

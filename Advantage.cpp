@@ -5,8 +5,8 @@
 #include "Advantage.h"
 
 namespace Gaming {
-    Advantage::ADVANTAGE_ID = 'D';
-    Advantage::ADVANTAGE_MULT_FACTOR = 2.0;
+    const char ADVANTAGE_ID = 'D';
+    const char ADVANTAGE_MULT_FACTOR = 2.0;
 
     Advantage::Advantage(const Game &g, const Position &p, double capacity) : Resource(g, p, capacity) {
 
