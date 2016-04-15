@@ -152,6 +152,58 @@ namespace Gaming {
 
         Surroundings piece;
 
+        if(pos.x == 0 && pos.y == 0) {
+            piece.array[0] = INACCESSIBLE;
+            piece.array[1] = INACCESSIBLE;
+            piece.array[3] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.x == 0 && pos.y == __height) {
+            piece.array[3] = INACCESSIBLE;
+            piece.array[6] = INACCESSIBLE;
+            piece.array[7] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if (pos.x == __width && pos.y == 0) {
+            piece.array[1] = INACCESSIBLE;
+            piece.array[2] = INACCESSIBLE;
+            piece.array[5] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.x == __width && pos.y == __height) {
+            piece.array[5] = INACCESSIBLE;
+            piece.array[7] = INACCESSIBLE;
+            piece.array[8] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.x == 0) {
+            piece.array[0] = INACCESSIBLE;
+            piece.array[3] = INACCESSIBLE;
+            piece.array[6] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.x == __width) {
+            piece.array[2] = INACCESSIBLE;
+            piece.array[5] = INACCESSIBLE;
+            piece.array[8] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.y == 0) {
+            piece.array[0] = INACCESSIBLE;
+            piece.array[1] = INACCESSIBLE;
+            piece.array[2] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else if(pos.y == __height) {
+            piece.array[6] = INACCESSIBLE;
+            piece.array[7] = INACCESSIBLE;
+            piece.array[9] = INACCESSIBLE;
+            piece.array[4] = SELF;
+        }
+        else {
+            piece.array[4] = SELF;
+        }
+
         for(int i = 0; i < 9; i++) {
             if(i != 4) {
                 if(i < 4) {
@@ -159,7 +211,12 @@ namespace Gaming {
                         piece.array[i] = __grid[temp - i]->getType();
                     }
                     else {
-                        piece.array[i] = EMPTY;
+                        if(piece.array[i] != INACCESSIBLE) {
+                            piece.array[i] = EMPTY;
+                        }
+                        else {
+                            piece.array[i] = INACCESSIBLE;
+                        }
                     }
                 }
                 if(i > 4) {
@@ -167,7 +224,12 @@ namespace Gaming {
                         piece.array[i] = __grid[temp + i]->getType();
                     }
                     else {
-                        piece.array[i] = EMPTY;
+                        if(piece.array[i] != INACCESSIBLE) {
+                            piece.array[i] = EMPTY;
+                        }
+                        else {
+                            piece.array[i] = INACCESSIBLE;
+                        }
                     }
                 }
             }
@@ -207,7 +269,61 @@ namespace Gaming {
         }
     }
     bool Game::isLegal(const ActionType &ac, const Position &pos) const {
-        unsigned int temp = pos.y * __width + pos.x;
+        Surroundings piece;
+        bool legal = false;
+
+        for(int i = 0; i < 9; i++) {
+            piece.array[i] = getSurroundings(pos).array[i];
+        }
+
+        switch(ac) {
+            case STAY:
+                legal = true;
+                break;
+            case N:
+                if(piece.array[1] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case S:
+                if(piece.array[7] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case E:
+                if(piece.array[3] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case W:
+                if(piece.array[5] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case NE:
+                if(piece.array[0] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case NW:
+                if(piece.array[2] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case SE:
+                if(piece.array[6] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            case SW:
+                if(piece.array[8] != INACCESSIBLE) {
+                    legal = true;
+                }
+                break;
+            default:
+                break;
+        }
+        return legal;
     }
     const Position Game::move(const Position &pos, const ActionType &ac) const {
         if(isLegal(ac, pos)) {
@@ -238,6 +354,9 @@ namespace Gaming {
             if(ac == NW) {
                 return Position(pos.x - 1, pos.y - 1);
             }
+        }
+        else {
+            return pos;
         }
     }
     void Game::round() {
