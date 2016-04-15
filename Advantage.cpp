@@ -3,17 +3,30 @@
 //
 
 #include "Advantage.h"
+#include "sstream"
 
 namespace Gaming {
-    const char ADVANTAGE_ID = 'D';
-    const char ADVANTAGE_MULT_FACTOR = 2.0;
+    const char Advantage::ADVANTAGE_ID = 'D';
+    const double Advantage::ADVANTAGE_MULT_FACTOR = 2.0;
 
-    Advantage::Advantage(const Game &g, const Position &p, double capacity) : Resource(g, p, capacity) {
+    Advantage::Advantage(const Game &g, const Position &p, double capacity) : Resource(g, p, capacity * ADVANTAGE_MULT_FACTOR) {
+        __capacity = capacity * ADVANTAGE_MULT_FACTOR;
+    }
+    Advantage::~Advantage() {
 
     }
 
     void Advantage::print(std::ostream &os) const {
-        os << ADVANTAGE_ID << Advantage::__id;
+        std::string str;
+        str = std::to_string(__id);
+
+        std::stringstream ss;
+        ss << ADVANTAGE_ID << str;
+        std::getline(ss, str);
+
+        for(int i = 0; i < str.length(); i++) {
+            os << str[i];
+        }
     }
 
     double Advantage::consume() {

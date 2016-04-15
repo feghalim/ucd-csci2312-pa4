@@ -20,10 +20,18 @@ namespace Gaming {
         __width = width;
         __height = height;
     }
-    unsigned DimensionEx::getExpHeight() const { return __exp_height; }
-    unsigned DimensionEx::getExpWidth() const { return __exp_width; }
-    unsigned DimensionEx::getWidth() const { return __width; }
-    unsigned DimensionEx::getHeight() const { return __height; }
+    unsigned DimensionEx::getExpHeight() const {
+        return __exp_height;
+    }
+    unsigned DimensionEx::getExpWidth() const {
+        return __exp_width;
+    }
+    unsigned DimensionEx::getWidth() const {
+        return __width;
+    }
+    unsigned DimensionEx::getHeight() const {
+        return __height;
+    }
     InsufficientDimensionsEx::InsufficientDimensionsEx(unsigned minWidth, unsigned minHeight, unsigned width, unsigned height) : DimensionEx(minWidth, minHeight, width, height) {
         setName("InsufficientDimensionsEx");
     }
@@ -52,6 +60,9 @@ namespace Gaming {
         setName("PositionNonemptyEx");
     }
     PosVectorEmptyEx::PosVectorEmptyEx() {
-
+        setName("PosVectorEmptyEx");
+    }
+    void PosVectorEmptyEx::__print_args(std::ostream &os) const {
+        os << getName() << ": " << " ";
     }
 }
