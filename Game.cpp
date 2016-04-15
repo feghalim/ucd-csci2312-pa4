@@ -9,12 +9,12 @@
 #include "Strategic.h"
 
 namespace Gaming {
-    const unsigned int NUM_INIT_AGENT_FACTOR = 4;
-    const unsigned int NUM_INIT_RESOURCE_FACTOR = 2;
-    const unsigned MIN_WIDTH = 3;
-    const unsigned MIN_HEIGHT = 3;
-    const double STARTING_AGENT_ENERGY = 20;
-    const double STARTING_RESOURCE_ENERGY = 10;
+    const unsigned int Game::NUM_INIT_AGENT_FACTOR = 4;
+    const unsigned int Game::NUM_INIT_RESOURCE_FACTOR = 2;
+    const unsigned Game::MIN_WIDTH = 3;
+    const unsigned Game::MIN_HEIGHT = 3;
+    const double Game::STARTING_AGENT_ENERGY = 20;
+    const double Game::STARTING_RESOURCE_CAPACITY = 10;
 
     Game::Game() {
         __width = MIN_WIDTH;
@@ -206,8 +206,67 @@ namespace Gaming {
             return NW;
         }
     }
+    bool Game::isLegal(const ActionType &ac, const Position &pos) const {
+        unsigned int temp = pos.y * __width + pos.x;
+    }
+    const Position Game::move(const Position &pos, const ActionType &ac) const {
+        if(isLegal(ac, pos)) {
+            if(ac == STAY) {
+                return pos;
+            }
+            if(ac == E) {
+                return Position(pos.x + 1, pos.y);
+            }
+            if(ac == W) {
+                return Position(pos.x - 1, pos.y);
+            }
+            if(ac == S) {
+                return Position(pos.x, pos.y + 1);
+            }
+            if(ac == N) {
+                return Position(pos.x, pos.y + 1);
+            }
+            if(ac == SE) {
+                return Position(pos.x + 1, pos.y + 1);
+            }
+            if(ac == NE) {
+                return Position(pos.x + 1, pos.y - 1);
+            }
+            if(ac == SW) {
+                return Position(pos.x - 1, pos.x + 1);
+            }
+            if(ac == NW) {
+                return Position(pos.x - 1, pos.y - 1);
+            }
+        }
+    }
+    void Game::round() {
+        __round++;
+    }
+    void Game::play(bool verbose) {
+
+    }
     void Game::populate() {
         __numInitAgents = (__width * __height) / NUM_INIT_AGENT_FACTOR;
         __numInitResources = (__width * __height) / NUM_INIT_RESOURCE_FACTOR;
+    }
+
+    std::ostream &operator<<(std::ostream &os, const Game &game) {
+        for(unsigned int i = 0; i < game.__width * game.__height; i++) {
+            if(game.__grid[i] == nullptr) {
+                os << "[   ]";
+            }
+            else {
+                os << "[" << game.__grid[i] << "]";
+            }
+
+            if(i % game.__width == 0) {
+                os << std::endl;
+            }
+
+        }
+        os << "Status: " << game.getStatus() << std::endl;
+
+        return os;
     }
 }
