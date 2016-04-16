@@ -21,26 +21,39 @@ namespace Gaming {
         if(other->getEnergy() == this->getEnergy()) {
             other->finish();
             this->finish();
-            return *this;
         }
         else if(other->getEnergy() > this->getEnergy()) {
-            other->addEnergy(__energy * -1);
+            other->__energy -= this->getEnergy();
             this->finish();
-            return *this;
         }
         else if(other->getEnergy() < this->getEnergy()) {
-            __energy += other->getEnergy();
+            __energy -= other->getEnergy();
             other->finish();
-            return *this;
         }
         return *this;
     }
     Piece& Agent::interact(Resource *other) {
-        addEnergy(other->consume());
+        __energy += other->consume();
         return *this;
     }
     Piece& Agent::operator*(Piece &other) {
-        other.interact(this);
+        Piece *piece = &other;
+        Resource *resource = dynamic_cast<Resource *>(piece);
+        if(resource) {
+            interact(resource);
+        }
+        Agent *agent = dynamic_cast<Agent *>(piece);
+        if(agent) {
+            interact(agent);
+        }
+        if(!isFinished()) {
+            Position newPos;
+            newPos = other.getPosition();
+            Position oldPos;
+            oldPos = getPosition();
+            setPosition(newPos);
+            other.setPosition(oldPos);
+        }
         return *this;
     }
 

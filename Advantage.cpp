@@ -30,7 +30,10 @@ namespace Gaming {
     }
 
     double Advantage::consume() {
-        return __capacity * ADVANTAGE_MULT_FACTOR;
+        double capacity = __capacity;
+        __capacity = -1;
+        finish();
+        return capacity;
     }
 
     double Advantage::getCapacity() const {

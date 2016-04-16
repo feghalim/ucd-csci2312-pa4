@@ -22,6 +22,7 @@ namespace Gaming {
         __width = MIN_WIDTH;
         __height = MIN_HEIGHT;
         __round = 0;
+        __verbose = false;
 
         for(int i = 0; i < __width * __height; i ++) {
             __grid.push_back(nullptr);
@@ -30,8 +31,14 @@ namespace Gaming {
         __status = NOT_STARTED;
     }
     Game::Game(unsigned width, unsigned height, bool manual) {
+        if(width < MIN_WIDTH || height < MIN_HEIGHT) {
+            throw InsufficientDimensionsEx(MIN_WIDTH, MIN_HEIGHT, width, height);
+        }
+
         __width = width;
         __height = height;
+        __verbose = false;
+        __round = 0;
 
         for(int i = 0; i < __width * __height; i ++) {
             __grid.push_back(nullptr);
@@ -73,7 +80,8 @@ namespace Gaming {
         unsigned int agents = 0;
 
         for(auto it = __grid.begin(); it != __grid.end(); it++) {
-            if(dynamic_cast<Agent *>(*it)) {
+            Agent *agentCast = dynamic_cast<Agent *>(*it);
+            if(agentCast) {
                 agents++;
             }
         }
@@ -84,7 +92,8 @@ namespace Gaming {
         unsigned int simple = 0;
 
         for(auto it = __grid.begin(); it != __grid.end(); it++) {
-            if(dynamic_cast<Simple *>(*it)) {
+            Simple *simpleCast = dynamic_cast<Simple *>(*it);
+            if(simpleCast) {
                 simple++;
             }
         }
@@ -95,7 +104,8 @@ namespace Gaming {
         unsigned int res = 0;
 
         for(auto it = __grid.begin(); it != __grid.end(); it++) {
-            if(dynamic_cast<Resource *>(*it)) {
+            Resource *resCast = dynamic_cast<Resource *>(*it);
+            if(resCast) {
                 res++;
             }
         }
@@ -106,7 +116,8 @@ namespace Gaming {
         unsigned int strategic = 0;
 
         for(auto it = __grid.begin(); it != __grid.end(); it++) {
-            if(dynamic_cast<Strategic *>(*it)) {
+            Strategic *stratCast = dynamic_cast<Strategic *>(*it);
+            if(stratCast) {
                 strategic++;
             }
         }
@@ -114,20 +125,36 @@ namespace Gaming {
         return strategic;
     }
     const Piece* Game::getPiece(unsigned int x, unsigned int y) const {
-        unsigned int temp = y * __width;
+        if(y > __width || x > __height) {
+            throw OutOfBoundsEx(__width, __height, x, y);
+        }
 
-        return __grid[temp + x];
+        unsigned int temp = x * __width;
+        if(__grid[temp + y] == nullptr) {
+            throw PositionEmptyEx(x, y);
+        }
+
+        return __grid[temp + y];
     }
 
     void Game::addSimple(const Position &position) {
-        unsigned int temp = position.y * __width;
+        if(position.y > __width || position.x > __height) {
+            throw OutOfBoundsEx(__width, __height, position.x, position.y);
+        }
 
-        __grid[temp + position.x] = new Simple(*this, position, STARTING_AGENT_ENERGY);
+        unsigned int temp = position.x * __width;
+
+        __grid[temp + position.y] = new Simple(*this, position, STARTING_AGENT_ENERGY);
     }
     void Game::addSimple(const Position &position, double energy) {
-        unsigned int temp = position.y * __width;
+        if(position.y > __width || position.x > __height) {
+            throw OutOfBoundsEx(__width, __height, position.x, position.y);
+        }
 
-        __grid[temp + position.x] = new Simple(*this, position, energy);
+        unsigned int temp = position.x * __width;
+
+        //__grid[temp + position.y] = new Simple(*this, position, energy);
+        __grid[temp + position.y] = new Simple(*this, position, energy);
     }
     void Game::addSimple(unsigned x, unsigned y) {
         Position position(x,y);
@@ -138,27 +165,39 @@ namespace Gaming {
         addSimple(position, energy);
     }
     void Game::addAdvantage(const Position &position) {
-        unsigned int temp = position.y * __width;
+        if(position.y > __width || position.x > __height) {
+            throw OutOfBoundsEx(__width, __height, position.x, position.y);
+        }
 
-        __grid[temp + position.x] = new Advantage(*this, position, STARTING_RESOURCE_CAPACITY);
+        unsigned int temp = position.x * __width;
+
+        __grid[temp + position.y] = new Advantage(*this, position, STARTING_RESOURCE_CAPACITY);
     }
     void Game::addAdvantage(unsigned x, unsigned y) {
         Position position(x, y);
         addAdvantage(position);
     }
     void Game::addFood(const Position &position) {
-        unsigned int temp = position.y * __width;
+        if(position.y > __width || position.x > __height) {
+            throw OutOfBoundsEx(__width, __height, position.x, position.y);
+        }
 
-        __grid[temp + position.x] = new Food(*this, position, STARTING_RESOURCE_CAPACITY);
+        unsigned int temp = position.x * __width;
+
+        __grid[temp + position.y] = new Food(*this, position, STARTING_RESOURCE_CAPACITY);
     }
     void Game::addFood(unsigned x, unsigned y) {
         Position position(x, y);
         addFood(position);
     }
     void Game::addStrategic(const Position &position, Strategy *s) {
-        unsigned int temp = position.y * __width;
+        if(position.y > __width || position.x > __height) {
+            throw OutOfBoundsEx(__width, __height, position.x, position.y);
+        }
 
-        __grid[temp + position.x] = new Strategic(*this, position, STARTING_AGENT_ENERGY, s);
+        unsigned int temp = position.x * __width;
+
+        __grid[temp + position.y] = new Strategic(*this, position, STARTING_AGENT_ENERGY, s);
     }
     void Game::addStrategic(unsigned x, unsigned y, Strategy *s) {
         Position position(x, y);
@@ -174,7 +213,7 @@ namespace Gaming {
         row: for(int i = -1; i <= 1; i++) {
             column: for(int k = -1; k <= 1; k++) {
                 if(pos.x + i >= 0 && pos.x + i < __height && pos.y + k >= 0 && pos.y + k < __width) {
-                    int temp = pos.y + k + (pos.x + i) * __width;
+                    int temp = pos.y + k + ((pos.x + i) * __width);
                     if(__grid[temp]) {
                         piece.array[k + 1 + ((i + 1) * 3)] = __grid[temp]->getType();
                     }
@@ -313,8 +352,8 @@ namespace Gaming {
         std::set<Piece *> pieces;
         for(auto it = __grid.begin(); it != __grid.end(); it++) {
             if(*it) {
+                (*it)->setTurned(false);
                 pieces.insert(pieces.end(), *it);
-                (*it)->setTurned(true);
             }
         }
 
@@ -333,12 +372,12 @@ namespace Gaming {
                             __grid[pos2.y + (pos2.x * __width)] = (*it);
                             __grid[pos.y + (pos.x * __width)] = p;
                         }
-                        else {
-                            // empty move
-                            (*it)->setPosition(pos2);
-                            __grid[pos2.y * __width + pos2. x] = (*it);
-                            __grid[pos.y * __width + pos.x] = nullptr;
-                        }
+                    }
+                    else {
+                        (*it)->setPosition(pos2);
+                        int temp = pos2.y * __width + pos2.x;
+                        __grid[pos2.y * __width + pos2. x] = (*it);
+                        __grid[pos.y * __width + pos.x] = nullptr;
                     }
                 }
             }

@@ -15,9 +15,6 @@ namespace Gaming {
     Piece::~Piece() {
 
     }
-    Piece& Piece::operator*(Piece &other) {
-        return other;
-    }
 
     std::ostream &operator<<(std::ostream &os, const Piece &piece) {
         piece.print(os);

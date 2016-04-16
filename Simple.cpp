@@ -28,29 +28,27 @@ namespace Gaming {
         }
     }
     ActionType Simple::takeTurn(const Surroundings &s) const {
-        int temp = 1000;
-        ActionType ac;
-        bool moveKnown = false;
 
+        ActionType ac = STAY;
+
+        std::vector<int> positions;
         for(int i = 0; i < 9; i++) {
-            if(s.array[i] == FOOD || s.array[i] == ADVANTAGE) {
-                temp = i;
-                moveKnown = true;
-                i = 10;
-                break;
+            if(s.array[i] == ADVANTAGE || s.array[i] == FOOD) {
+                positions.push_back(i);
             }
         }
-        if(!moveKnown) {
+        if(positions.size() == 0) {
             for(int i = 0; i < 9; i++) {
-                if(s.array[i] == EMPTY);
-                temp = i;
-                moveKnown = true;
-                i = 10;
-                break;
+                if(s.array[i] == EMPTY) {
+                    positions.push_back(i);
+                }
+            }
+            if(positions.size() == 0) {
+                positions.push_back(100000);
             }
         }
 
-        switch(temp) {
+        switch (positions[0]) {
             case 0:
                 ac = NW;
                 break;
