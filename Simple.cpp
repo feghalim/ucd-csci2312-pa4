@@ -48,7 +48,15 @@ namespace Gaming {
             }
         }
 
-        switch (positions[0]) {
+        int push = rand() % positions.size();
+        if(positions.size() == 1) {
+            push = 0;
+        }
+        if(push >= 9) {
+            push = 8;
+        }
+
+        switch (positions[push]) {
             case 0:
                 ac = NW;
                 break;

@@ -457,10 +457,10 @@ namespace Gaming {
     std::ostream &operator<<(std::ostream &os, const Game &game) {
         for(unsigned int i = 0; i < game.__width * game.__height; i++) {
             if(game.__grid[i] == nullptr) {
-                os << "[   ]";
+                os << "[     ]";
             }
             else {
-                os << "[" << game.__grid[i] << "]";
+                os << "[" << *(game.__grid[i]) << "]";
             }
 
             if(i % game.__width == 0) {
